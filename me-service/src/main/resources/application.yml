@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: me-service
+
+  threads:
+    virtual:
+      enabled: false
+
+  sql:
+    init:
+      mode: always
+  
+  datasource:
+    url: dbc:postgresql://localhost:5432/mydatabase
+    username: myuser
+    password: secret
+
+  modulith:
+    moments:
+      enable-time-machine: true
+    events:
+      jdbc:
+        schema-initialization:
+          enabled: true
+    republish-outstanding-events-on-restart: true
+      
+            
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://127.0.0.1:9090
+
+server:
+  port: 8081
+  
+logging:
+  level:
+    root: INFO
+    #org.springframework.security: TRACE

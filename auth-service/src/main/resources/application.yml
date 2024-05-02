@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: auth-service
+  threads:
+    virtual:
+      enabled: true
+
+  security:
+    user:
+      name: user
+      password: "{bcrypt}$2a$10$v03OSTB3Ud2uxyhmypic/uCJ9SQlyu5YWvm5of9EQ9SJzCbw4VgKC"
+      roles:
+        - USER
+        - READER
+        - ADMIN
+
+    oauth2:
+      authorizationserver:
+        client:
+          my-idp:
+            registration:
+              client-id: "crm"
+              # the client secret is "secret" (without quotes)
+              #client-secret: "{bcrypt}$2a$10$jdJGhzsiIqYFpjJiYWMl/eKDOd8vdyQis2aynmFN0dgJ53XvpzzwC"
+              client-secret: "{noop}crm"
+              redirect-uris:
+                - http://localhost:8080/login/oauth2/code/crm
+                - http://127.0.0.1:8080/authorized
+                - http://localhost/login/oauth2/code/crm
+              post-logout-redirect-uris:
+                - "http://127.0.0.1:8080/"
+
+              scopes: 
+                - "openid"
+                - "profile"
+                - "user.read"
+                - "user.write"
+
+
+              client-authentication-methods:
+                - "client_secret_basic"
+              authorization-grant-types:
+                - "authorization_code"
+                - "client_credentials"
+                - "refresh_token"
+                
+            require-authorization-consent: true
+
+server:
+  port: 9090
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: TRACE
