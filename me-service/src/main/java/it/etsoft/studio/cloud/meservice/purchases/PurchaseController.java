@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
 @ResponseBody
+@Slf4j
 public class PurchaseController {
   private final PurchaseService purchaseService;
 
@@ -20,7 +23,8 @@ public class PurchaseController {
     @PostMapping("/purchases")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     Integer place(@RequestBody Purchase purchase, Principal principal) {
-        System.out.println(purchase + " for user " + principal.getName());
+        log.info("{} for user {}", purchase, principal.getName());
+        
         return this.purchaseService.place(principal.getName(), purchase.productId(), purchase.quantity());
     }
 }
