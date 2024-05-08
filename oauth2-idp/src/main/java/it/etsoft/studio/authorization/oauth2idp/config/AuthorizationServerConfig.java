@@ -31,6 +31,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 @EnableWebSecurity
 public class AuthorizationServerConfig {
 
+
     /**
      * Definisco gli utenti validi in memoria
      *

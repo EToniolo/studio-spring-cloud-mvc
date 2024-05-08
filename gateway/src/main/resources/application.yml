@@ -5,6 +5,11 @@ spring:
 
   application:
     name: gateway
+
+  # graalvm
+  cloud:
+    refresh:
+      enabled: false
     
   threads:
     virtual:
@@ -13,7 +18,7 @@ spring:
   security.oauth2.client:
     provider:
       provider-1:
-        issuer-uri: http://127.0.0.1:9090
+        issuer-uri: ${AUTH_SERVER_ADDRESS:http://127.0.0.1:9090}
         
     registration:
       client:
@@ -26,6 +31,14 @@ spring:
         scope: openid
 
 server.forward-headers-strategy: framework
+
+gateway:
+  api:
+    prefix: /api/
+    host: ${API_SERVER_ADDRESS:http://127.0.0.1:8081}
+  ui:
+    prefix: /
+    host: ${UI_SERVER_ADDRESS:http://127.0.0.1:9000}
 
 logging:
   level:

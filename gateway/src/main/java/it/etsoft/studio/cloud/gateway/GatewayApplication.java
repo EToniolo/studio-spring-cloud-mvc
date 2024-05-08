@@ -9,6 +9,7 @@ import static org.springframework.cloud.gateway.server.mvc.handler.HandlerFuncti
 import java.net.URI;
 import java.security.Principal;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.mvc.ProxyExchange;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
 
+import it.etsoft.studio.cloud.gateway.config.GatewayParams;
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootApplication
@@ -31,6 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 @ResponseBody
 @Slf4j
 public class GatewayApplication {
+
+	@Autowired
+	private GatewayParams gatewayParams;
 
 	public static void main(String[] args) {
 		SpringApplication.run(GatewayApplication.class, args);
@@ -58,7 +63,7 @@ public class GatewayApplication {
 	@Bean
 	RouterFunction<ServerResponse> apiRouteGets() {
 		return route("crmGets")
-				.GET(API_PREFIX + WILDCARD, http(API_HOST))
+				.GET(API_PREFIX + WILDCARD, http(gatewayParams.getApi().getHost()))
 				.before(rewritePath(API_PREFIX + "(?<segment>.*)", "/${segment}"))
 				.filter(tokenRelay())
 				.build();
@@ -67,7 +72,7 @@ public class GatewayApplication {
 	@Bean
 	RouterFunction<ServerResponse> apiRoutePosts() {
 		return route("crmPosts")
-				.POST(API_PREFIX + WILDCARD, http(API_HOST))
+				.POST(API_PREFIX + WILDCARD, http(gatewayParams.getApi().getHost()))
 				.before(rewritePath(API_PREFIX + "(?<segment>.*)", "/${segment}"))
 				.filter(tokenRelay())
 				.build();
@@ -80,7 +85,7 @@ public class GatewayApplication {
 		log.info("Request path:{} Principal:{}", path, principal);
 		
 		return request
-				.uri(URI.create(UI_HOST + "/" + path))
+				.uri(URI.create(gatewayParams.getUi().getHost() + "/" + path))
 				.get();
 	}
 }

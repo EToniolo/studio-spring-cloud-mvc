@@ -14,6 +14,31 @@ services:
     networks:
       - net-private
 
+  auth-server:
+    container_name: auth-server
+    image:  docker.io/library/oauth2-idp:0.0.1-SNAPSHOT
+    ports:
+      - "9090:9090"
+    networks:
+      - net-private
+
+
+  gateway:
+    container_name: gateway
+    image: docker.io/library/gateway:0.0.1-SNAPSHOT
+    depends_on:
+      - auth-server
+      - api-server
+      - webapp
+    ports:
+      - "8080:8080"
+    environment:
+      - AUTH_SERVER_ADDRESS=http://auth-server:9090
+      - API_SERVER_ADDRESS=http://api-server:8081
+      - UI_SERVER_ADDRESS=http://webapp:9000
+    networks:
+      - net-private
+
   api-server:
     container_name: api-server
     image: docker.io/library/me-service:0.0.1-SNAPSHOT
@@ -22,9 +47,10 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - 'POSTRGRESQL_JDBC_SERVER=postgresdb'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:5432/mydatabase
+      - SPRING_DATASOURCE_USERNAME=myuser
+      - SPRING_DATASOURCE_PASSWORD=secret
+
     networks:
       - net-private
 
